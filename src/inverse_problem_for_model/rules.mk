@@ -198,6 +198,9 @@ inverse_problem_for_model_OBJECTS += \
 	$O/write_output_ASCII_or_binary.spec.o \
 	$O/write_output_SU.spec.o \
 	$O/write_seismograms.spec.o \
+        $O/dl_runtime_saver.spec.o \
+        $O/dl_runtime_saver_displ.spec.o \
+        $O/dl_runtime_saver_strain.spec.o \
 	$(EMPTY_MACRO)
 
 

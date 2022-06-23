@@ -1,3 +1,12 @@
+# 3D Receiver-side SGT and DGF
+To write out the Strain Greens Tensor (SGT) and displacement (the Greens Function, DGF) database in the 3D model with SPECFEM3D_Cartesian, following parameters in the Par_File should be:
+```shell
+SIMULATION_TYPE=1
+SAVE_FORWARD=.true.
+ATTENUATION=.true.
+```
+
+
 # Specfem3D
 
 SPECFEM3D_Cartesian simulates acoustic (fluid), elastic (solid), coupled acoustic/elastic, poroelastic or seismic wave propagation in any type of conforming mesh of hexahedra (structured or not.)

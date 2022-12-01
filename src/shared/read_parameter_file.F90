@@ -75,17 +75,31 @@
       write(*,*)
     endif
 
-    call read_value_logical(SAVE_FORWARD_BY_STEP, 'SAVE_FORWARD_BY_STEP', ier)
+    call read_value_logical(OUTPUT_WAVEFIELD_STRAIN_DUMPS, 'OUTPUT_WAVEFIELD_STRAIN_DUMPS', ier)
     if (ier /= 0) then
       some_parameters_missing_from_Par_file = .true.
-      write(*,'(a)') 'SAVE_FORWARD_BY_STEP            = .false.'
+      write(*,'(a)') 'OUTPUT_WAVEFIELD_STRAIN_DUMPS            = .false.'
       write(*,*)
     endif
 
-    call read_value_integer(STEP_INTERVAL_SAVE_FORWARD, 'STEP_INTERVAL_SAVE_FORWARD', ier)
+    call read_value_logical(OUTPUT_WAVEFIELD_DISPL_DUMPS, 'OUTPUT_WAVEFIELD_DISPL_DUMPS', ier)
     if (ier /= 0) then
       some_parameters_missing_from_Par_file = .true.
-      write(*,'(a)') 'STEP_INTERVAL_SAVE_FORWARD      = 50'
+      write(*,'(a)') 'OUTPUT_WAVEFIELD_DISPL_DUMPS            = .false.'
+      write(*,*)
+    endif
+
+    call read_value_integer(NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN, 'NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN', ier)
+    if (ier /= 0) then
+      some_parameters_missing_from_Par_file = .true.
+      write(*,'(a)') 'NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN      = 50'
+      write(*,*)
+    endif
+
+    call read_value_integer(NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL, 'NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL', ier)
+    if (ier /= 0) then
+      some_parameters_missing_from_Par_file = .true.
+      write(*,'(a)') 'NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL      = 50'
       write(*,*)
     endif
 
@@ -1396,8 +1410,11 @@
   call bcast_all_singlei(SIMULATION_TYPE)
   call bcast_all_singlei(NOISE_TOMOGRAPHY)
   call bcast_all_singlel(SAVE_FORWARD)
-  call bcast_all_singlel(SAVE_FORWARD_BY_STEP)
-  call bcast_all_singlei(STEP_INTERVAL_SAVE_FORWARD)
+
+  call bcast_all_singlel(OUTPUT_WAVEFIELD_STRAIN_DUMPS)
+  call bcast_all_singlel(OUTPUT_WAVEFIELD_DISPL_DUMPS)
+  call bcast_all_singlei(NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN)
+  call bcast_all_singlei(NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL)
 
   call bcast_all_singlel(INVERSE_FWI_FULL_PROBLEM)
   call bcast_all_singlei(UTM_PROJECTION_ZONE)

@@ -65,8 +65,6 @@ end module constants
   integer :: SIMULATION_TYPE
   integer :: NOISE_TOMOGRAPHY
   logical :: SAVE_FORWARD
-  logical :: SAVE_FORWARD_BY_STEP
-  integer :: STEP_INTERVAL_SAVE_FORWARD
   logical :: INVERSE_FWI_FULL_PROBLEM
 
   integer :: UTM_PROJECTION_ZONE
@@ -74,7 +72,12 @@ end module constants
 
   logical :: UNDO_ATTENUATION_AND_OR_PML
   integer :: NT_DUMP_ATTENUATION
-
+  
+  logical :: OUTPUT_WAVEFIELD_STRAIN_DUMPS
+  logical :: OUTPUT_WAVEFIELD_DISPL_DUMPS
+  integer :: NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN
+  integer :: NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL
+  
   ! number of time steps
   integer :: NSTEP
   double precision :: DT

@@ -251,10 +251,16 @@
 
     ! poroelastic solver
     if (POROELASTIC_SIMULATION) call compute_forces_poroelastic_calling()
-
-    ! save forward (strain & displacement)
-    if (SIMULATION_TYPE == 1 .and. SAVE_FORWARD .and. SAVE_FORWARD_BY_STEP .and. mod(it,STEP_INTERVAL_SAVE_FORWARD) == 0) then
+    
+    ! Dumping strain 
+    if (SIMULATION_TYPE == 1 .and. SAVE_FORWARD .and. OUTPUT_WAVEFIELD_STRAIN_DUMPS & 
+    .and. mod(it,NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN) == 0) then
       call save_forward_arrays_strain()
+    endif
+    
+    ! Dumping displacement 
+    if (SIMULATION_TYPE == 1 .and. SAVE_FORWARD .and. OUTPUT_WAVEFIELD_DISPL_DUMPS & 
+    .and. mod(it,NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL) == 0) then
       call save_forward_arrays_displ()
     endif
 

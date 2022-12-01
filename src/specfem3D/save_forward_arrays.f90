@@ -138,115 +138,16 @@
     ! current subset iteration
     iteration_on_subset_tmp = iteration_on_subset
 
-    ! saves frame of the forward simulation
-    write(outputname,'(a,i6.6,a,i6.6,a)') 'proc',myrank,'_save_frame_at',iteration_on_subset_tmp,'.bin'
-    outputname = trim(LOCAL_PATH)//'/'//trim(outputname)
+    ! Only dumping receiver-side Greens function: SGT, DISP
+    if (DUMP_WAVEFIELD_ONLY) then
 
-    ! outputs to file
-    open(unit=IOUT,file=trim(outputname),status='unknown',form='unformatted',action='write',iostat=ier)
-    if (ier /= 0 ) call exit_MPI(myrank,'Error opening file proc***_save_frame_at** for writing')
+      ! dump sgt
+      if (DUMP_WAVEFIELD_STRAIN .and. ELASTIC_SIMULATION .and. ATTENUATION) then 
+        ! outputs to file
+        write(outputname, "('/proc',i6.6,'_strain_field_Step_',I0,'.bin')") myrank,it
+        open(unit=IOUT,file=trim(LOCAL_PATH)//trim(outputname),status='unknown',form='unformatted',iostat=ier)
+        if (ier /= 0 ) call exit_MPI(myrank,'Error opening file proc***_save_frame_at** for writing')
 
-    if (ACOUSTIC_SIMULATION) then
-      write(IOUT) potential_acoustic
-      write(IOUT) potential_dot_acoustic
-      write(IOUT) potential_dot_dot_acoustic
-    endif
-
-    if (ELASTIC_SIMULATION) then
-      write(IOUT) displ
-      write(IOUT) veloc
-      write(IOUT) accel
-      if (ATTENUATION) then
-        write(IOUT) R_trace
-        write(IOUT) R_xx
-        write(IOUT) R_yy
-        write(IOUT) R_xy
-        write(IOUT) R_xz
-        write(IOUT) R_yz
-        ! strain not needed anymore, to save file diskspace - will be re-constructed based on b_displ...
-        !write(IOUT) epsilondev_trace
-        !write(IOUT) epsilondev_xx
-        !write(IOUT) epsilondev_yy
-        !write(IOUT) epsilondev_xy
-        !write(IOUT) epsilondev_xz
-        !write(IOUT) epsilondev_yz
-      endif
-    endif
-
-    close(IOUT)
-  endif
-
-  end subroutine save_forward_arrays_undoatt
-
-!
-!-------------------------------------------------------------------------------------------------
-!
-
-  subroutine save_forward_arrays_displ()
-
-  ! save files to local disk or tape system if restart file
-    
-  use specfem_par
-  use specfem_par_elastic
-  use specfem_par_acoustic
-  use specfem_par_poroelastic
-
-  implicit none
-  integer :: ier
-  character(len=MAX_STRING_LEN) :: outputname
-
-  ! checks if anything to do
-  if (UNDO_ATTENUATION_AND_OR_PML) return
-
-  ! create file name
-  write(outputname, "('/proc',i6.6,'_disp_Step_',I0,'.bin')") myrank,it
-  open(unit=IOUT,file=trim(LOCAL_PATH)//trim(outputname),status='unknown',form='unformatted',iostat=ier)
-
-  if (ier /= 0) then
-    print *,'error: opening disp_Step_*.bin'
-    call exit_mpi(myrank,'error opening file disp_Step_*.bin')
-  endif
-
-  if (ELASTIC_SIMULATION) then
-    write(IOUT) displ
-    FLUSH(IOUT)
-    close(IOUT)
-  endif
-
-  end subroutine save_forward_arrays_displ
-    
-!
-!-------------------------------------------------------------------------------------------------
-!
-  
-  subroutine save_forward_arrays_strain()
-
-  ! save files to local disk or tape system if restart file
-
-  use specfem_par
-  use specfem_par_elastic
-  use specfem_par_acoustic
-  use specfem_par_poroelastic
-
-  implicit none
-  integer :: ier
-  character(len=MAX_STRING_LEN) :: outputname
-
-  ! checks if anything to do
-  if (UNDO_ATTENUATION_AND_OR_PML) return
-        
-  ! create file name
-    write(outputname, "('/proc',i6.6,'_strain_field_Step_',I0,'.bin')") myrank,it
-    open(unit=IOUT,file=trim(LOCAL_PATH)//trim(outputname),status='unknown',form='unformatted',iostat=ier)
-    
-    if (ier /= 0) then
-      print *,'error: opening strain_field_Step_*.bin'
-      call exit_mpi(myrank,'error opening strain_field_Step_*.bin')
-    endif
-    
-    if (ELASTIC_SIMULATION) then
-      if (ATTENUATION) then
-        ! only the strain field
         write(IOUT) epsilondev_trace
         write(IOUT) epsilondev_xx
         write(IOUT) epsilondev_yy
@@ -254,13 +155,61 @@
         write(IOUT) epsilondev_xz
         write(IOUT) epsilondev_yz
         FLUSH(IOUT)
+        close(IOUT)
       endif
+      
+      ! dump displacement field
+      if (DUMP_WAVEFIELD_DISPL .and. ELASTIC_SIMULATION) then     
+        ! outputs to file
+        write(outputname, "('/proc',i6.6,'_disp_Step_',I0,'.bin')") myrank,it
+        open(unit=IOUT,file=trim(LOCAL_PATH)//trim(outputname),status='unknown',form='unformatted',iostat=ier)
+        if (ier /= 0 ) call exit_MPI(myrank,'Error opening file proc***_save_frame_at** for writing')
+        
+        write(IOUT) displ
+        FLUSH(IOUT)
+        close(IOUT)
+      endif
+
+    else
+
+      ! saves frame of the forward simulation
+      write(outputname,'(a,i6.6,a,i6.6,a)') 'proc',myrank,'_save_frame_at',iteration_on_subset_tmp,'.bin'
+      outputname = trim(LOCAL_PATH)//'/'//trim(outputname)
+
+      ! outputs to file
+      open(unit=IOUT,file=trim(outputname),status='unknown',form='unformatted',action='write',iostat=ier)
+      if (ier /= 0 ) call exit_MPI(myrank,'Error opening file proc***_save_frame_at** for writing')
+
+      if (ACOUSTIC_SIMULATION) then
+        write(IOUT) potential_acoustic
+        write(IOUT) potential_dot_acoustic
+        write(IOUT) potential_dot_dot_acoustic
+      endif
+
+      if (ELASTIC_SIMULATION) then
+        write(IOUT) displ
+        write(IOUT) veloc
+        write(IOUT) accel
+        if (ATTENUATION) then
+          write(IOUT) R_trace
+          write(IOUT) R_xx
+          write(IOUT) R_yy
+          write(IOUT) R_xy
+          write(IOUT) R_xz
+          write(IOUT) R_yz
+          ! strain not needed anymore, to save file diskspace - will be re-constructed based on b_displ...
+          !write(IOUT) epsilondev_trace
+          !write(IOUT) epsilondev_xx
+          !write(IOUT) epsilondev_yy
+          !write(IOUT) epsilondev_xy
+          !write(IOUT) epsilondev_xz
+          !write(IOUT) epsilondev_yz
+        endif
+      endif
+      close(IOUT)
     endif
 
-  end subroutine save_forward_arrays_strain
+    
+  endif
 
-!
-!-------------------------------------------------------------------------------------------------
-!
-
-
+  end subroutine save_forward_arrays_undoatt

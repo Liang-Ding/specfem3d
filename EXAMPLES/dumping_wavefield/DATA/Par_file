@@ -137,9 +137,12 @@ BOTTOM_FREE_SURFACE             = .false.
 # use the flag below. It performs undoing of attenuation and/or of PMLs in an exact way for sensitivity kernel calculations
 # but requires disk space for temporary storage, and uses a significant amount of memory used as buffers for temporary storage.
 # When that option is on the second parameter indicates how often the code dumps restart files to disk (if in doubt, use something between 100 and 1000).
-UNDO_ATTENUATION_AND_OR_PML     = .false.
-NT_DUMP_ATTENUATION             = 500
+UNDO_ATTENUATION_AND_OR_PML     = .true.
+NT_DUMP_ATTENUATION             = 50
 
+DUMP_WAVEFIELD_ONLY				= .true.
+DUMP_WAVEFIELD_STRAIN			= .true.
+DUMP_WAVEFIELD_DISPL			= .true.
 #-----------------------------------------------------------
 #
 # Visualization
@@ -376,16 +379,4 @@ ADIOS_FOR_MESH                  = .true.
 ADIOS_FOR_FORWARD_ARRAYS        = .true.
 ADIOS_FOR_KERNELS               = .true.
 ADIOS_FOR_UNDO_ATTENUATION      = .false.
-
-
-#-----------------------------------------------------------
-# Dumping strain and displacement field
-# Works if (SIMULATION_TYPE = 1 and SAVE_FORWARD = .true. and ATTENUATION = .true.)
-# 
-# strain field
-OUTPUT_WAVEFIELD_STRAIN_DUMPS   = .true.
-NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN 	= 50
-# displacement field
-OUTPUT_WAVEFIELD_DISPL_DUMPS    = .true.
-NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL	= 50
 

@@ -251,24 +251,12 @@
 
     ! poroelastic solver
     if (POROELASTIC_SIMULATION) call compute_forces_poroelastic_calling()
-    
-    ! Dumping strain 
-    if (SIMULATION_TYPE == 1 .and. SAVE_FORWARD .and. OUTPUT_WAVEFIELD_STRAIN_DUMPS & 
-    .and. mod(it,NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_STRAIN) == 0) then
-      call save_forward_arrays_strain()
-    endif
-    
-    ! Dumping displacement 
-    if (SIMULATION_TYPE == 1 .and. SAVE_FORWARD .and. OUTPUT_WAVEFIELD_DISPL_DUMPS & 
-    .and. mod(it,NTSTEP_BETWEEN_OUTPUT_WAVEFIELD_DISPL) == 0) then
-      call save_forward_arrays_displ()
-    endif
 
     ! restores last time snapshot saved for backward/reconstruction of wavefields
     ! note: this must be read in after the Newmark time scheme
     if (SIMULATION_TYPE == 3 .and. it == 1) then
       call read_forward_arrays()
-    endif
+    endif 
 
     ! calculating gravity field at current timestep
     if (GRAVITY_SIMULATION) call gravity_timeseries()
